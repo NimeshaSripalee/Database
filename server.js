@@ -2,16 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const mysql = require('mysql2');
-
+const cors = require("cors")
 const app = express();
 app.use(bodyParser.json());
-
+app.use(cors())
 // mysql connection
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'tdlj',
-    database: 'fadb'
+    password: 'root',
+    database: 'firstaid',
 });
 
 // connect to db
@@ -145,19 +145,21 @@ app.post('/api/login', (req, res) => {
         }
 
         //determine user type
-        if (user.type_of_user === 'GeneralPublic') {
-            res.status(200).send('login successful as  General public');
-        }else if (user.type_of_user === 'Ambulance') {
-            res.status(200).send('Login successful as Ambulance');
-        } else {
+        if (user) {
+            res.status(200).send({
+                user_type:user.type_of_user,
+            });
+        }
+         else {
             res.status(400).send('unknown user type');
         }
     });
 });
 
+app.get("/test",(req,res)=>res.send({hello:6+9}))
 
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running  http://localhost:${PORT}`);
 });
